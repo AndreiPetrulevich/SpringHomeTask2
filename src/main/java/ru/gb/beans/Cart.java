@@ -2,33 +2,37 @@ package ru.gb.beans;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ru.gb.model.ItemMuteRep;
-import ru.gb.model.ItemRep;
+import ru.gb.model.ItemMuteRepo;
+import ru.gb.model.ItemRepo;
 import ru.gb.model.Product;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Profile("cart")
-public class Cart implements ItemMuteRep{
+@Scope("prototype")
+public class Cart implements ItemMuteRepo {
 
-    private ItemRep itemRep;
+    private ItemRepo itemRep;
 
-    Map<Integer, Product> items;
+    Map<Integer, Optional<Product>> items = new HashMap<>();
 
     @Autowired
-    public Cart(ItemRep itemRep) {
+    public Cart(ItemRepo itemRep) {
         this.itemRep = itemRep;
     }
 
     @Override
-    public ItemRep getItemRep() {
+    public ItemRepo getItemRep() {
         return this.itemRep;
     }
 
     @Override
-    public void setItemRep(ItemRep itemRep) {
+    public void setItemRep(ItemRepo itemRep) {
         this.itemRep = itemRep;
     }
 
@@ -42,6 +46,6 @@ public class Cart implements ItemMuteRep{
 
     @Override
     public void addItem(int id) {
-        items.put(id, itemRep.getItem(id));
+        items.put(id,itemRep.getItem(id));
     }
 }

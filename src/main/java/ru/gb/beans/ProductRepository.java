@@ -3,15 +3,19 @@ package ru.gb.beans;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.gb.model.InjectProductTitle;
-import ru.gb.model.ItemRep;
+import ru.gb.model.ItemRepo;
 import ru.gb.model.Product;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Component
+@Component("prototype")
 @Primary
-public class ProductRepository implements ItemRep {
+public class ProductRepository implements ItemRepo {
 
-    private static List<Product> products;
+    private static List<Product> products = new ArrayList<>();
 
     @InjectProductTitle
     private static void addProductToList(Product product) {
@@ -22,25 +26,24 @@ public class ProductRepository implements ItemRep {
         }
     }
 
-    @Override
-    public Product getItem(int id) {
+    @PostConstruct
+    public void init() {
 
+    }
+
+    @Override
+    public Optional<Product> getItem(int id) {
         if (!products.isEmpty()) {
-            for(Product product : products) {
-                if (product.getId() == id) {
-                    System.out.println(product.toString());
-                    return product;
-                }
+            return Optional.of(products.get(id));
             }
-        }
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public void getAllItems() {
         if (!products.isEmpty()) {
             for(Product product : products) {
-                System.out.println(product.toString());;
+                System.out.println(product.toString());
             }
         }
     }
